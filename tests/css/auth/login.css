@@ -1,0 +1,50 @@
+body {
+    background: url('https://static.vecteezy.com/ti/fotos-gratis/p1/12604205-medico-icone-tela-virtual-cuidados-de-saude-e-medicos-no-espaco-de-copia-de-fundo-gratis-foto.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+}
+
+.card {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.9); /* Fundo branco semitransparente */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.card-body {
+    padding: 2rem;
+}
+.form-control {
+    border-radius: 15px;
+    padding: 1rem;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.form-control:focus {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.btn-primary {
+    background: #0193F0;
+    border: none;
+    border-radius: 15px;
+    padding: 1rem;
+    transition: background 0.3s ease-in-out;
+}
+.btn-primary:hover {
+    background: #0c82cc;
+}
+.password-container {
+    position: relative;
+}
+.password-container i {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+.text-muted {
+    font-size: 0.9rem;
+}
+.img-fluid {
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}

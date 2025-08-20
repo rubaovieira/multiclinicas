@@ -1,0 +1,58 @@
+/* Container do Breadcrumb */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Itens do Breadcrumb */
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    color: #6c757d; /* Cor neutra */
+    font-weight: 500;
+}
+
+/* Links dos Breadcrumbs */
+.breadcrumb-item a {
+    color: #007bff; /* Cor neutra para links (pode ser customizada) */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+/* Efeito hover nos links */
+.breadcrumb-item a:hover {
+    color: #0056b3; /* Cor neutra para hover (pode ser customizada) */
+    text-decoration: underline;
+}
+
+/* Último item do breadcrumb */
+.breadcrumb-item.active {
+    color: #343a40; /* Neutro, cor de item ativo */
+    font-weight: bold;
+    cursor: default;
+}
+
+/* Separador (simples) entre os itens */
+.breadcrumb-item::after {
+    content: '›'; /* Simbolo neutro de separação */
+    color: #cccccc; /* Cor neutra para o separador */
+    margin: 0 10px;
+    font-size: 14px;
+}
+
+/* Remove o separador do último item */
+.breadcrumb-item:last-child::after {
+    content: '';
+}
+
+/* Estilo básico de caixa */
+.breadcrumb {
+    padding: 10px 15px;
+    border-radius: 4px;
+    border: 1px solid #e9ecef; /* Borda neutra */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra leve */
+}
