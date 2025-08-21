@@ -4,66 +4,31 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 
 use App\Http\Controllers\Dashboard\DashboardController;
-use App\Http\Controllers\Master\MasterController;
-use App\Http\Controllers\Master\ClinicaController;
-use App\Http\Controllers\Master\AdminUserController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
 use App\Http\Controllers\Client\AppointmentController as ClientAppointmentController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ReceitaController;
 
 /**
- * --- Rotas temporárias de diagnóstico (remover depois) ---
+ * Rotas utilitárias temporárias (pode remover depois)
  */
-Route::get('/_ping', fn () => 'ok '.app()->version());
-
+Route::get('/_ping', fn () => response('ok', 200));
 Route::get('/__clear', function () {
     \Artisan::call('optimize:clear');
-    return nl2br(e(\Artisan::output()));
-});
-
-Route::get('/_routes', function () {
-    \Artisan::call('route:list');
-    return response('<pre>'.e(\Artisan::output()).'</pre>');
+    return response("cleared\n", 200, ['Content-Type' => 'text/plain']);
 });
 
 /**
- * --- Bootstrap do admin (TEMPORÁRIO; remova depois de usar) ---
+ * Agrupamentos vindos de outros arquivos
  */
-Route::get('/bootstrap-admin', function () {
-    $email = 'admin@multiclinicas.com.br'; // troque se quiser
-    $senha = 'Trocar123!';
-
-    $modelClass = class_exists(\App\Models\User::class)
-        ? \App\Models\User::class
-        : \App\User::class;
-
-    $user = $modelClass::firstOrCreate(
-        ['email' => $email],
-        ['name' => 'Administrador', 'password' => Hash::make($senha)]
-    );
-
-    if (!$user->wasRecentlyCreated) {
-        $user->password = Hash::make($senha);
-        $user->save();
-    }
-
-    return "<pre>ADMIN PRONTO\nLogin: $email\nSenha: $senha\n(Remova a rota /bootstrap-admin depois!)</pre>";
-});
-
-/**
- * Includes de rotas
- */
-require __DIR__ . '/auth.php';
-require __DIR__ . '/client.php';
-require __DIR__ . '/service.php';
-require __DIR__ . '/procedures.php';
-require __DIR__ . '/health_plans.php';
-require __DIR__ . '/send_emails.php';
-require __DIR__ . '/stock.php';
-require __DIR__ . '/master.php';
+require __DIR__.'/auth.php';
+require __DIR__.'/client.php';
+require __DIR__.'/service.php';
+require __DIR__.'/procedures.php';
+require __DIR__.'/health_plans.php';
+require __DIR__.'/send_emails.php';
+require __DIR__.'/stock.php';
+require __DIR__.'/master.php';
 
 /**
  * Suas rotas
@@ -94,3 +59,28 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 Route::post('/receita', [ReceitaController::class, 'store'])->name('receita.store');
 Route::delete('/receita/{id}', [ReceitaController::class, 'destroy'])->name('receita.destroy');
 Route::get('/receita/print/{id}', [ReceitaController::class, 'print'])->name('receita.print');
+
+/**
+ * Rota temporária para criar/atualizar o usuário admin (remova depois)
+ * Ajuste ADMIN_EMAIL/ADMIN_PASS via variáveis, se quiser.
+ */
+Route::get('/bootstrap-admin', function () {
+    $email = env('ADMIN_EMAIL', 'admin@multiclinicas.com.br');
+    $senha = env('ADMIN_PASS', 'Trocar123!');
+
+    $modelClass = class_exists(\App\Models\User::class) ? \App\Models\User::class : \App\User::class;
+
+    /** @var \Illuminate\Database\Eloquent\Model $user */
+    $user = $modelClass::firstOrCreate(
+        ['email' => $email],
+        ['name' => 'Administrador', 'password' => Hash::make($senha)]
+    );
+
+    if (!$user->wasRecentlyCreated) {
+        $user->password = Hash::make($senha);
+        $user->save();
+    }
+
+    return response("<pre>ADMIN PRONTO\nLogin: $email\nSenha: $senha\n(Remova a rota /bootstrap-admin depois!)</pre>", 200)
+        ->header('Content-Type', 'text/plain');
+});
