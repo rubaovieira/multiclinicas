@@ -29,8 +29,8 @@ ENV PORT=8080
 # - cria storage:link
 # - sobe servidor embutido apontando para /public
 CMD sh -lc '\
-  echo "=== BOOT v3: $(php -v | head -n1) ===" && \
-  mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache && \
+  echo "=== BOOT v4 ===" && \
+  mkdir -p storage/framework/{cache,sessions,views} bootstrap/cache && \
   chmod -R 777 storage bootstrap/cache && \
   php artisan optimize:clear && \
   php artisan migrate --force || true && \
