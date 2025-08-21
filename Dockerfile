@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-# Extensões necessárias (mpdf precisa de gd)
+# Dependências para extensões
 RUN apt-get update && apt-get install -y \
     git unzip zip \
     libpng-dev libjpeg-dev libfreetype6-dev \
@@ -15,11 +15,23 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . /app
 
-# Dependências PHP
+# Instala dependências PHP
 RUN composer install --no-dev --prefer-dist --optimize-autoloader
 
-# Porta padrão (Railway injeta $PORT; usamos 8080 se não houver)
+# Porta padrão (Railway injeta $PORT)
 ENV PORT=8080
 
-# Iniciar sem o "artisan serve" (usa servidor embutido do PHP apontando para /public)
-CMD sh -lc "php artisan config:clear && php -S 0.0.0.0:${PORT:-8080} -t public public/index.php"
+# PREPARE tudo no start:
+# - cria pastas de sessão/cache/views
+# - ajusta permissões
+# - limpa config
+# - roda migrações
+# - cria storage:link
+# - sobe servidor embutido apontando para /public
+CMD sh -lc '\
+  mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache && \
+  chmod -R 777 storage bootstrap/cache && \
+  php artisan config:clear && \
+  php artisan migrate --force || true && \
+  php artisan storage:link || true && \
+  php -S 0.0.0.0:${PORT:-8080} -t public public/index.php'
