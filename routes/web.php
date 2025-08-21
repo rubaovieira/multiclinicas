@@ -9,18 +9,14 @@ use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentControll
 use App\Http\Controllers\Client\AppointmentController as ClientAppointmentController;
 use App\Http\Controllers\ReceitaController;
 
-/**
- * Rotas utilitárias temporárias (pode remover depois)
- */
+/** rotas utilitárias (pode remover depois) */
 Route::get('/_ping', fn () => response('ok', 200));
 Route::get('/__clear', function () {
     \Artisan::call('optimize:clear');
     return response("cleared\n", 200, ['Content-Type' => 'text/plain']);
 });
 
-/**
- * Agrupamentos vindos de outros arquivos
- */
+/** includes */
 require __DIR__.'/auth.php';
 require __DIR__.'/client.php';
 require __DIR__.'/service.php';
@@ -30,11 +26,9 @@ require __DIR__.'/send_emails.php';
 require __DIR__.'/stock.php';
 require __DIR__.'/master.php';
 
-/**
- * Suas rotas
- */
+/** suas rotas */
 Route::get('/', [DashboardController::class, 'dashboard'])->middleware(['auth'])->name('home');
-Route::get('/home', [DashboardController::class, 'dashboard'])->middleware(['auth', 'verificarUsuarioAtivoParaLogin'])->name('home');
+Route::get('/home', [DashboardController::class, 'dashboard'])->middleware(['auth','verificarUsuarioAtivoParaLogin'])->name('home');
 
 Route::middleware(['auth'])->get('/appointments', [AppointmentController::class, 'index'])->name('appointments');
 
@@ -60,17 +54,12 @@ Route::post('/receita', [ReceitaController::class, 'store'])->name('receita.stor
 Route::delete('/receita/{id}', [ReceitaController::class, 'destroy'])->name('receita.destroy');
 Route::get('/receita/print/{id}', [ReceitaController::class, 'print'])->name('receita.print');
 
-/**
- * Rota temporária para criar/atualizar o usuário admin (remova depois)
- * Ajuste ADMIN_EMAIL/ADMIN_PASS via variáveis, se quiser.
- */
+/** rota temporária p/ criar/atualizar admin (remova depois) */
 Route::get('/bootstrap-admin', function () {
     $email = env('ADMIN_EMAIL', 'admin@multiclinicas.com.br');
     $senha = env('ADMIN_PASS', 'Trocar123!');
-
     $modelClass = class_exists(\App\Models\User::class) ? \App\Models\User::class : \App\User::class;
 
-    /** @var \Illuminate\Database\Eloquent\Model $user */
     $user = $modelClass::firstOrCreate(
         ['email' => $email],
         ['name' => 'Administrador', 'password' => Hash::make($senha)]
