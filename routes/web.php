@@ -73,3 +73,24 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 Route::post('/receita', [ReceitaController::class, 'store'])->name('receita.store');
 Route::delete('/receita/{id}', [ReceitaController::class, 'destroy'])->name('receita.destroy');
 Route::get('/receita/print/{id}', [ReceitaController::class, 'print'])->name('receita.print');
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Hash;
+
+Route::get('/bootstrap-admin', function () {
+    $email = 'admin@multiclinicas.com.br';
+    $senha = 'Trocar123!';
+
+    $modelClass = class_exists(\App\Models\User::class) ? \App\Models\User::class : \App\User::class;
+
+    $user = $modelClass::firstOrCreate(
+        ['email' => $email],
+        ['name' => 'Administrador', 'password' => Hash::make($senha)]
+    );
+
+    if (!$user->wasRecentlyCreated) {
+        $user->password = Hash::make($senha);
+        $user->save();
+    }
+
+    return "<pre>ADMIN PRONTO\nLogin: $email\nSenha: $senha\n(Remova a rota /bootstrap-admin depois!)</pre>";
+});
