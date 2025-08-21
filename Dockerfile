@@ -31,7 +31,7 @@ ENV PORT=8080
 CMD sh -lc '\
   mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache && \
   chmod -R 777 storage bootstrap/cache && \
-  php artisan config:clear && \
+  php artisan optimize:clear && \
   php artisan migrate --force || true && \
   php artisan storage:link || true && \
   php -S 0.0.0.0:${PORT:-8080} -t public public/index.php'
